@@ -1,7 +1,5 @@
 Payson Checkout With Recurring for OpenCart 3
 
-
-
 ## Installation
 
 * Make a backup of your files and database
