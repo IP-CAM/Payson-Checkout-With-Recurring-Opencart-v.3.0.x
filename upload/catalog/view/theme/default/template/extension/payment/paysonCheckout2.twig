@@ -1,0 +1,121 @@
+{% if snippet is defined %}
+        {% if status == readyToPay %}
+            // Nothing to do
+            {{ header }}
+            {{ column_left }}
+            {{ column_right }}
+            
+            <div class="container">{{ content_top }}
+            <!-- <iframe id='checkoutIframe' name='checkoutIframe' src= frameborder='0'  scrolling='no'> </iframe>-->
+            </div>  
+            {{ snippet}}
+            {{ footer }}
+        
+        {% else %}
+                {% if recurring %}
+                    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ recurring }}
+                       <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                {% endif %}
+                
+                {% if is_comments %}
+                    <p><strong>{{ text_payson_comments }}</strong></p>
+                    <p>
+                      <textarea name="payson_comments" id="payson_comments" rows="6" class="form-control">{{ payson_comment }}</textarea>
+                    </p>
+                {% endif %}
+                {% if customerIsLogged == false %}
+                        
+                        <!-- <div class="well well-sm"> -->
+                        <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ info_checkout }}
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                        
+                {% endif %}
+                    
+                        {{ snippet}}
+                        <div id="paysonTracker" style="display: none"></div>
+                    
+        {% endif %}
+    
+{% else %} 
+    
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_checkout_id }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% if recurring_currency %}
+                <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ recurring_currency }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+        {% endif %}
+                
+        <div id="paysonTracker" style="display: none">{{ random() }}</div>
+    
+{% endif %}
+
+<script type="text/javascript"><!--  
+
+    $("#payson_comments").on('mouseout', function(e) {
+        $.ajax({
+            type: 'get',
+            url: 'index.php?route=extension/payment/paysonCheckout2/paysonComments' + '&payson_comments=' + e.target.value,
+            cache: false,
+            success: function(response) {
+                //Do Something
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                //Do Something to handle error
+            }
+        });
+     });
+
+   // QUICH AJAX CHECKOUT OPEN CART FIX -> START
+    document.paysonQuickCheckoutTracker = function() {
+        try {
+            // Check payment method
+            var isPayson = document.getElementById("paysonTracker");
+            
+            var paymentForm = document.getElementById('payment_method_form');
+            if(paymentForm) {
+                var paysonPaymentMethod = document.getElementById('paysonCheckout2');
+                if(paysonPaymentMethod) {
+                    isPayson = paysonPaymentMethod.checked;
+                }
+            }
+            
+            document.getElementById("confirm_view").style.display = (isPayson?"none":"block");
+            document.getElementById("payment_address").parentElement.style.display = (isPayson?"none":"block");
+            document.getElementById("payment_view").parentElement.parentElement.parentElement.className = (isPayson?"col-md-12":"col-md-8");
+            
+        } catch(ex) {
+            // Nothing to do
+        }
+        setTimeout(document.paysonQuickCheckoutTracker, 500);
+    };
+    document.paysonQuickCheckoutTracker();
+    // QUICH AJAX CHECKOUT OPEN CART FIX -> END
+    
+    
+    document.addEventListener("PaysonEmbeddedAddressChanged",function(evt) {
+        var address = evt.detail;
+        
+        //adress.City
+        //adress.CountryCode
+        //adress.FirstName
+        //adress.LastName
+        //adress.PostalCode
+        //adress.Street
+        //alert(address.City);
+        
+        //console.log(address);
+
+            
+        var country_code = '<?php echo isset($country_code)?strtoupper($country_code):0; ?>';
+        var customerIsLogged = '<?php echo isset($customerIsLogged)?$customerIsLogged:0; ?>';
+
+        if(!customerIsLogged && (country_code !== address.CountryCode.toUpperCase())){
+           document.location='index.php?route=payment/paysonCheckout2/returnFromPayson&address_data='+JSON.stringify(address);
+        }
+    });
+ 
+//--></script>
