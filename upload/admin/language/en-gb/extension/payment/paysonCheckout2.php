@@ -7,7 +7,7 @@ $_['heading_title'] = 'Payson Checkout  With Recurring';
 
 // Text
 $_['text_modul_name'] = 'Payson Checkout With Recurring';
-$_['text_modul_version'] = '1.0.0.1';
+$_['text_modul_version'] = '1.0.0.2';
 
 $_['text_payment'] = 'Payment';
 $_['text_extension']     = 'Extensions';
