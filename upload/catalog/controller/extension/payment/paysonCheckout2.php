@@ -7,7 +7,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
     
     //test 9
 
-    const MODULE_VERSION = 'paysonEmbedded_with_recurring_1.0.0.2';
+    const MODULE_VERSION = 'paysonEmbedded_with_recurring_1.0.0.3';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -397,6 +397,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
         
         switch ($checkout['status']) {
             case "readyToShip": // Payson Checkout payment OK
+            case "processingPayment":
             case "customerSubscribed": // Subscription registration OK
                 $succesfullStatus = $this->config->get('payment_paysonCheckout2_order_status_id');
                 $comment = "";
@@ -433,7 +434,13 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
                 
                 // Add order history
                 //order_id, order_status_id, comment = '', notify = false, override = false
-                $orderHistoryId = $this->model_checkout_order->addOrderHistory($orderIdTemp, $succesfullStatus, $comment, false, true);
+                //$orderHistoryId = $this->model_checkout_order->addOrderHistory($orderIdTemp, $succesfullStatus, $comment, false, true);
+                if($checkout['status'] == "readyToShip"){
+                    $orderHistoryId = $this->model_checkout_order->addOrderHistory($orderIdTemp, $succesfullStatus, $comment, false, true);
+                }
+                if($checkout['status'] == "customerSubscribed"){
+                    $orderHistoryId = $this->model_checkout_order->addOrderHistory($orderIdTemp, 2, $comment, false, true);
+                }
                 
                 if ($this->cart->hasRecurringProducts()) {
                     
@@ -459,6 +466,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
                 }
                 break;
             case "readyToPay":
+            case "processingPayment":
                 if ($checkout['id'] != Null) {
                     //$this->response->redirect($this->url->link('checkout/cart'));
                     $this->response->redirect($this->url->link('extension/payment/paysonCheckout2/index', 'snippet=' . $checkout['snippet']));
@@ -492,8 +500,12 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
                 'currency' => 'SEK', // TODO: Support for other currencies
                 'items' => $this->getOrderItems($orderId),
             );
+
+            //expirationDate
+            $days = 1;
             $paymentData = array(
                 'subscriptionid' => $subscriptionId, 
+                'expirationDate' => date('Y-m-d', strtotime(' +'. $days .' day')),
                 'order' => $order, 
                 'notificationUri' => $this->url->link('extension/payment/paysonCheckout2/paysonIpn&order_id=' . $orderId.'&checkoutRef=PaysonPaymentSub'),
                 'description' => 'Order ' . $orderId);
@@ -503,7 +515,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
 
             
             
-            if (isset($recurringPayment['status']) && $recurringPayment['status'] == 'readyToShip') {
+            if (isset($recurringPayment['status']) && $recurringPayment['status'] == 'processingPayment') {
                 $order_info = $this->model_checkout_order->getOrder($orderId);
                 $recurring_products = $this->cart->getRecurringProducts();
                 return $recurringPayment;

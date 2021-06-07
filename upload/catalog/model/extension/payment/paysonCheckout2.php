@@ -218,11 +218,19 @@ class ModelExtensionPaymentPaysonCheckout2 extends Model {
 
             $paysonRecurringPayment = $this->createSubPayson($recurringPaymentClient, $recurring_order['payson_embedded_subscription_id'], $new_order_id, $profile, $price_recurring_product + $recurring_product_tax_rate, $recurring_product_tax_rate, $shipping);
 
-            if (isset($paysonRecurringPayment['status']) && $paysonRecurringPayment['status'] == 'readyToShip') {
+            //if (isset($paysonRecurringPayment['status']) && $paysonRecurringPayment['status'] == 'readyToShip') {
+            if (isset($paysonRecurringPayment['status']) && (($paysonRecurringPayment['status'] == 'readyToShip') ||  ($paysonRecurringPayment['status'] == 'processingPayment'))) {
                 $comment = 'Payson Subscription ID : '. $paysonRecurringPayment['subscriptionId'] . "\n\n";
                 $comment .= 'Payson Recurring Payment ID : ' . $paysonRecurringPayment['id'] . "\n\n";
 
-                $this->model_checkout_order->addOrderHistory($new_order_id, $this->config->get('payment_paysonCheckout2_order_status_id'), $comment, false, false);
+                //$this->model_checkout_order->addOrderHistory($new_order_id, $this->config->get('payment_paysonCheckout2_order_status_id'), $comment, false, false);
+                if ($paysonRecurringPayment['status'] == 'readyToShip'){
+                    $this->model_checkout_order->addOrderHistory($new_order_id, $this->config->get('payment_paysonCheckout2_order_status_id'), $comment, false, false);
+                }
+                if ($paysonRecurringPayment['status'] == 'processingPayment'){
+                    $this->model_checkout_order->addOrderHistory($new_order_id, 2, $comment, false, false);
+                }
+
                 $order_info2 = $this->model_checkout_order->getOrder($new_order_id);
                 
                     $price_transaction = (($price_recurring_product + $recurring_product_tax_rate) * $profile['product_quantity']) + $shipping_total['value'] + $shipping_tax_rate;
@@ -385,7 +393,11 @@ class ModelExtensionPaymentPaysonCheckout2 extends Model {
             'items' => $a
         );
 
-        $paymentData = array('subscriptionid' => $subscriptionId, 'order' => $order, 'notificationUri' => $this->url->link('extension/payment/paysonCheckout2/paysonIpn&order_id=' . $orderId.'&checkoutRef=PaysonPaymentSub'), 'description' => 'Order ' . $orderId);
+        //expirationDate
+        $days = 1;
+        $paymentData = array('subscriptionid' => $subscriptionId, 'expirationDate' => date('Y-m-d', strtotime(' +'. $days .' day')), 'order' => $order, 'notificationUri' => $this->url->link('extension/payment/paysonCheckout2/paysonIpn&order_id=' . $orderId.'&checkoutRef=PaysonPaymentSub'), 'description' => 'Order ' . $orderId);
+
+       // $paymentData = array('subscriptionid' => $subscriptionId, 'order' => $order, 'notificationUri' => $this->url->link('extension/payment/paysonCheckout2/paysonIpn&order_id=' . $orderId.'&checkoutRef=PaysonPaymentSub'), 'description' => 'Order ' . $orderId);
 
         try {
             if (isset($subscriptionId)) {
