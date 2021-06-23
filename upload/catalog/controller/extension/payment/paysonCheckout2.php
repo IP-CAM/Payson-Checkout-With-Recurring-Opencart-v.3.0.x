@@ -7,7 +7,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
     
     //test 9
 
-    const MODULE_VERSION = 'paysonEmbedded_with_recurring_1.0.0.3';
+    const MODULE_VERSION = 'paysonEmbedded_with_recurring_1.0.0.4';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -996,7 +996,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
     public function notifyStatusToPayson($route, &$data){
         //require_once(DIR_SYSTEM . '../system/library/paysonpayments/include.php');
         $getCheckoutObject = $this->getPaysonEmbeddedOrder($data[0]);
-        if($getCheckoutObject['checkout_id'] && ($getCheckoutObject['payment_status'] == 'readyToShip' || $getCheckoutObject['payment_status'] == 'shipped' || $getCheckoutObject['payment_status'] == 'paidToAccount'))
+        if(isset($getCheckoutObject['checkout_id']) && ($getCheckoutObject['payment_status'] == 'readyToShip' || $getCheckoutObject['payment_status'] == 'shipped' || $getCheckoutObject['payment_status'] == 'paidToAccount'))
         {
             try
             {
