@@ -6,6 +6,10 @@ Payson Checkout With Recurring for OpenCart 3
 
 * Download the extension [PaysonCheckout2WithRecurring.ocmod.zip]
 
+* Make sure the 'admin' folder in your store is not named something else.
+
+* The admin folder in the module needs to be renamed if it has a different name.
+
 * Upload the extension via _Extensions_ -> _Installer_
 
 * Install the extension via _Extensions_ -> _Extensions_ -> _Payments_
