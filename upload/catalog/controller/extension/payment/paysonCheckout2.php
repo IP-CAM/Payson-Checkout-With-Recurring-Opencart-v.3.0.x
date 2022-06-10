@@ -7,7 +7,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
     
     //test 9
 
-    const MODULE_VERSION = 'paysonEmbedded_with_recurring_1.0.0.4';
+    const MODULE_VERSION = 'paysonEmbedded_with_recurring_1.0.0.5';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -410,25 +410,28 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
                 
                 // Update order
                 $this->db->query("UPDATE `" . DB_PREFIX . "order` SET
-                                firstname  = '" . $checkout['customer']['firstName'] . "',
-                                lastname  = '" . $checkout['customer']['lastName'] . "',
-                                telephone  = '" . ($checkout['customer']['phone']?$checkout['customer']['phone']:'')."',
-                                email               = '" . $checkout['customer']['email'] . "',
-                                payment_firstname  = '" . $checkout['customer']['firstName'] . "',
-                                payment_lastname   = '" . $checkout['customer']['lastName'] . "',
-                                payment_address_1  = '" . $checkout['customer']['street'] . "',
-                                payment_city       = '" . $checkout['customer']['city'] . "', 
-                                payment_country    = '" . $checkout['customer']['countryCode'] . "',
-                                payment_postcode   = '" . $checkout['customer']['postalCode'] . "', 
-                                shipping_firstname  = '" . $checkout['customer']['firstName'] . "',
-                                shipping_lastname   = '" . $checkout['customer']['lastName'] . "',
-                                shipping_address_1  = '" . $checkout['customer']['street'] . "',
-                                shipping_city       = '" . $checkout['customer']['city'] . "', 
-                                shipping_country    = '" . $checkout['customer']['countryCode'] . "', 
-                                shipping_postcode   = '" . $checkout['customer']['postalCode'] . "',            
+                                firstname  = '" . $this->db->escape($checkout['customer']['firstName']) . "',
+                                lastname  = '" . $this->db->escape($checkout['customer']['lastName']) . "',
+                                telephone  = '" . (isset($checkout['customer']['phone']) ? $this->db->escape($checkout['customer']['phone']):'')."',
+                                email              = '" . $this->db->escape($checkout['customer']['email']) . "',
+
+                                payment_firstname  = '" . $this->db->escape($checkout['customer']['firstName']) . "',
+                                payment_lastname   = '" . $this->db->escape($checkout['customer']['lastName']) . "',
+                                payment_address_1  = '" . $this->db->escape($checkout['customer']['street']) . "',
+                                payment_city       = '" . $this->db->escape($checkout['customer']['city']) . "', 
+                                payment_country    = '" . $this->db->escape($checkout['customer']['countryCode']) . "',
+                                payment_postcode   = '" . $this->db->escape($checkout['customer']['postalCode']) . "', 
+
+                                shipping_firstname  = '" . $this->db->escape($checkout['customer']['firstName']) . "',
+                                shipping_lastname   = '" . $this->db->escape($checkout['customer']['lastName']) . "',
+                                shipping_address_1  = '" . $this->db->escape($checkout['customer']['street']) . "',
+                                shipping_city       = '" . $this->db->escape($checkout['customer']['city']) . "', 
+                                shipping_country    = '" . $this->db->escape($checkout['customer']['countryCode']) . "', 
+                                shipping_postcode   = '" . $this->db->escape($checkout['customer']['postalCode']) . "',
+
                                 payment_code        = 'paysonCheckout2'
-                                WHERE order_id      = '" . $orderIdTemp . "'");
-                
+                                WHERE order_id      = '" . (int) $orderIdTemp . "'");
+
                
                 $this->writeArrayToLog($comment);
                 
@@ -615,7 +618,7 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
 
         $order_data = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-         $query = "SELECT `product_id`, `name`, `model`, `price`, `quantity`, `tax` / `price` as 'tax_rate' FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = " . (int) $orderId . " UNION ALL SELECT 0, '" . $this->language->get('text_gift_card') . "', `code`, `amount`, '1', 0.00 FROM `" . DB_PREFIX . "order_voucher` WHERE `order_id` = " . (int) $orderId;
+         $query = "SELECT `product_id`, `name`, `model`, `price`, `quantity`, `tax` / `price` as 'tax_rate' FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = " . (int) $orderId . " UNION ALL SELECT 0, '" . $this->db->escape($this->language->get('text_gift_card')) . "', `code`, `amount`, '1', 0.00 FROM `" . DB_PREFIX . "order_voucher` WHERE `order_id` = " . (int) $orderId;
         $product_query = $this->db->query($query)->rows;
 
         foreach ($this->cart->getProducts() as $product) {
@@ -805,28 +808,28 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
      */
     private function updatePaymentResponseDatabase($checkout, $id, $call = 'returnCall') {
         $this->db->query("UPDATE `" . DB_PREFIX . "payson_embedded_order` SET 
-                        payment_status  = '" . $checkout['status'] . "',
+                        payment_status  = '" . $this->db->escape($checkout['status']) . "',
                         updated                       = NOW(), 
                         sender_email                  = 'sender_email', 
                         currency_code                 = 'currency_code',
                         tracking_id                   = 'tracking_id',
                         type                          = 'type',
-                        shippingAddress_name          = '" . $checkout['customer']['firstName'] . "', 
-                        shippingAddress_lastname      = '" . $checkout['customer']['lastName'] . "', 
-                        shippingAddress_street_ddress = '" . str_replace( array( '\'', '"', ',' , ';', '<', '>', '&' ), ' ', $checkout['customer']['street']) . "',
-                        shippingAddress_postal_code   = '" . $checkout['customer']['postalCode'] . "',
-                        shippingAddress_city          = '" . $checkout['customer']['city'] . "', 
-                        shippingAddress_country       = '" . $checkout['customer']['countryCode'] . "'
-            WHERE  checkout_id            = '" . $id . "'"
+                        shippingAddress_name          = '" . $this->db->escape($checkout['customer']['firstName']) . "', 
+                        shippingAddress_lastname      = '" . $this->db->escape($checkout['customer']['lastName']) . "', 
+                        shippingAddress_street_ddress = '" . $this->db->escape(str_replace( array( '\'', '"', ',' , ';', '<', '>', '&' ), ' ', $checkout['customer']['street'])) . "',
+                        shippingAddress_postal_code   = '" . $this->db->escape($checkout['customer']['postalCode']) . "',
+                        shippingAddress_city          = '" . $this->db->escape($checkout['customer']['city']) . "', 
+                        shippingAddress_country       = '" . $this->db->escape($checkout['customer']['countryCode']) . "'
+            WHERE  checkout_id            = '" . $this->db->escape($id) . "'"
         );
     }
 
     private function storePaymentResponseDatabase($checkoutId, $orderId) {
         $this->db->query("INSERT INTO " . DB_PREFIX . "payson_embedded_order SET 
                             payson_embedded_id  = '',
-                            order_id            = '" . $orderId . "', 
-                            checkout_id         = '" . $checkoutId . "', 
-                            purchase_id         = '" . $checkoutId . "',
+                            order_id            = '" . (int) $orderId . "', 
+                            checkout_id         = '" . $this->db->escape($checkoutId) . "', 
+                            purchase_id         = '" . $this->db->escape($checkoutId) . "',
                             payment_status      = 'created', 
                             added               = NOW(), 
                             updated             = NOW()"
@@ -971,8 +974,8 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
             if(is_string($p_comments)){
                 $this->session->data['comment'] = $p_comments;
                 $this->db->query("UPDATE `" . DB_PREFIX . "order` SET 
-                comment  = '" . nl2br($p_comments) . "'
-                WHERE order_id      = '" . $this->session->data['order_id'] . "'");  
+                comment  = '" . $this->db->escape(nl2br($p_comments)) . "'
+                WHERE order_id      = '" . (int) $this->session->data['order_id'] . "'");  
             }
         }
     }
@@ -1054,12 +1057,12 @@ class ControllerExtensionPaymentPaysonCheckout2 extends Controller {
     }
     
     public function addOrderRec($order_info, $payson_embedded_subscription_id, $payson_embedded_order_id) {
-        $this->db->query("INSERT INTO `" . DB_PREFIX . "payson_embedded_order_rec` SET `order_id` = '" . (int)$order_info['order_id'] . "', `payson_embedded_subscription_id` = '" . $this->db->escape($payson_embedded_subscription_id) . "', `payson_embedded_order_id` = '" . $this->db->escape($payson_embedded_order_id) . "', `date_added` = now(), `date_modified` = now(), `currency_code` = '" . $this->db->escape($order_info['currency_code']) . "', `total` = '" . $this->currency->format($order_info['total'], $order_info['currency_code'], false, false) . "'");
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "payson_embedded_order_rec` SET `order_id` = '" . (int)$order_info['order_id'] . "', `payson_embedded_subscription_id` = '" . $this->db->escape($payson_embedded_subscription_id) . "', `payson_embedded_order_id` = '" . $this->db->escape($payson_embedded_order_id) . "', `date_added` = now(), `date_modified` = now(), `currency_code` = '" . $this->db->escape($order_info['currency_code']) . "', `total` = '" . (float) $this->currency->format($order_info['total'], $this->db->escape($order_info['currency_code']), false, false) . "'");
 
     return $this->db->getLastId();
     }
         
     public function addTransaction($payson_embedded_order_rec_id, $type, $order_info) {
-        $this->db->query("INSERT INTO `" . DB_PREFIX . "payson_embedded_order_transaction` SET `payson_embedded_order_rec_id` = '" . (int)$payson_embedded_order_rec_id . "', `date_added` = now(), `type` = '" . $this->db->escape($type) . "', `amount` = '" . $this->currency->format($order_info['total'], $order_info['currency_code'], false, false) . "'");
+        $this->db->query("INSERT INTO `" . DB_PREFIX . "payson_embedded_order_transaction` SET `payson_embedded_order_rec_id` = '" . (int)$payson_embedded_order_rec_id . "', `date_added` = now(), `type` = '" . $this->db->escape($type) . "', `amount` = '" . (float) $this->currency->format($order_info['total'], $this->db->escape($order_info['currency_code']), false, false) . "'");
     }
 }

@@ -7,7 +7,7 @@ $_['paysonCheckout2_example'] = 'Example Extra Text';
 $_['heading_title'] = 'Payson Checkout Med Abonnemang';
 // Text
 $_['text_modul_name'] = 'Payson Checkout Med Abonnemang';
-$_['text_modul_version'] = '1.0.0.4';
+$_['text_modul_version'] = '1.0.0.5';
 $_['text_payment'] = 'Payment';
 $_['text_extension']     = 'Extensions';
 $_['text_success'] = 'Success: Du har &auml;ndrat Payson Checkout Med Abonnemang modulen!';
