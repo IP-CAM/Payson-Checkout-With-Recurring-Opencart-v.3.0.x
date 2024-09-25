@@ -7,11 +7,11 @@ $_['paysonCheckout2_example'] = 'Example Extra Text';
 $_['heading_title'] = 'Payson Checkout Med Abonnemang';
 // Text
 $_['text_modul_name'] = 'Payson Checkout Med Abonnemang';
-$_['text_modul_version'] = '1.0.0.5';
+$_['text_modul_version'] = '1.0.0.6';
 $_['text_payment'] = 'Payment';
 $_['text_extension']     = 'Extensions';
 $_['text_success'] = 'Success: Du har &auml;ndrat Payson Checkout Med Abonnemang modulen!';
-$_['text_paysonCheckout2'] = '<a onclick="window.open(\'https://www.payson.se/tj%C3%A4nster/ta-betalt\');"><img src="view/image/payment/paysonCheckout2.png" alt="payson Checkout Med Abonnemang" title="payson Checkout Med Abonnemang" /></a>';
+$_['text_paysonCheckout2'] = '<a onclick="window.open(\'https://www.svea.com/sv-se/foretag/betallosningar/e-handel/payson-checkout\');"><img src="view/image/payment/paysonCheckout2.png" alt="payson Checkout Med Abonnemang" title="payson Checkout Med Abonnemang" /></a>';
 $_['text_edit'] = 'Uppdatera Payson Invoice';
 
 // Entry

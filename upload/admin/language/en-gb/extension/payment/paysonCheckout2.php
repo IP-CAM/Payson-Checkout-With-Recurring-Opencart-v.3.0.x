@@ -7,12 +7,12 @@ $_['heading_title'] = 'Payson Checkout  With Recurring';
 
 // Text
 $_['text_modul_name'] = 'Payson Checkout With Recurring';
-$_['text_modul_version'] = '1.0.0.5';
+$_['text_modul_version'] = '1.0.0.6';
 
 $_['text_payment'] = 'Payment';
 $_['text_extension']     = 'Extensions';
 $_['text_success'] = 'Success: You have modified Payson Checkout With Recurring module!';
-$_['text_paysonCheckout2'] = '<a onclick="window.open(\'https://www.payson.se/tj%C3%A4nster/ta-betalt\');"><img src="view/image/payment/paysonCheckout2.png" alt="payson Checkout With Recurring" title="payson Checkout With Recurring" /></a>';
+$_['text_paysonCheckout2'] = '<a onclick="window.open(\'https://www.svea.com/sv-se/foretag/betallosningar/e-handel/payson-checkout\');"><img src="view/image/payment/paysonCheckout2.png" alt="payson Checkout With Recurring" title="payson Checkout With Recurring" /></a>';
 $_['text_edit'] = 'Edit Payson Direct';
 
 // Entry
